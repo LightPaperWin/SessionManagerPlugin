@@ -22,5 +22,28 @@ namespace SessionManager.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection _lastSession {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["_lastSession"]));
+            }
+            set {
+                this["_lastSession"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool _restoreLastSession {
+            get {
+                return ((bool)(this["_restoreLastSession"]));
+            }
+            set {
+                this["_restoreLastSession"] = value;
+            }
+        }
     }
 }

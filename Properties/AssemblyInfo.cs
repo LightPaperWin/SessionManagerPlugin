@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LightPaper.Plugins.SessionManager")]
+[assembly: AssemblyTitle("LightPaper.Plugins.SessionManagerViewModel")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LightPaper.Plugins.SessionManager")]
+[assembly: AssemblyProduct("LightPaper.Plugins.SessionManagerViewModel")]
 [assembly: AssemblyCopyright("Copyright ©  2014 Ashok Gelal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
