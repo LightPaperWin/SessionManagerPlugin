@@ -106,11 +106,13 @@ namespace SessionManager.ViewModels
                 DocumentPaths = paths
             };
             Sessions.Add(session);
+            _logger.Log("Saved session {Title}", Category.Info, MagicStrings.PLUGIN_CATEGORY, title);
         }
 
         private void DeleteSessionCommandHandler(Session session)
         {
             Sessions.Remove(session);
+            _logger.Log("Deleted session {Title}", Category.Info, MagicStrings.PLUGIN_CATEGORY, session.Title);
         }
 
         public void Load()
@@ -146,6 +148,7 @@ namespace SessionManager.ViewModels
             {
                 _documentsManager.AddFromPaths(session.DocumentPaths);
             }
+            _logger.Log("Loaded session {Title}", Category.Info, MagicStrings.PLUGIN_CATEGORY, session.Title);
             await Task.Delay(100);
             _sessionsCollectionView.MoveCurrentTo(null);
             _sessionsCollectionView.CurrentChanged += SessionCurrentChangedHandler;
@@ -179,10 +182,12 @@ namespace SessionManager.ViewModels
             if (Sessions == null || !Sessions.Any())
             {
                 File.Delete(SessionsFilePath);
+                _logger.Log("No sessions. Deleting session file", Category.Info, MagicStrings.PLUGIN_CATEGORY);
                 return;
             }
             var serialized = JsonConvert.SerializeObject(Sessions, Formatting.Indented);
             WriteToFile(SessionsFilePath, serialized);
+            _logger.Log("{count} sessions saved", Category.Info, MagicStrings.PLUGIN_CATEGORY, Sessions.Count);
         }
 
         private void SaveLastSession()
@@ -191,6 +196,7 @@ namespace SessionManager.ViewModels
             paths.AddRange(GetCurrentValidPaths().ToArray());
             Settings.Default._lastSession = paths;
             Settings.Default.Save();
+            _logger.Log("Saved last session", Category.Info, MagicStrings.PLUGIN_CATEGORY);
         }
 
         private IEnumerable<string> GetCurrentValidPaths()
