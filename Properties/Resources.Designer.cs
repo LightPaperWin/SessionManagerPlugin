@@ -39,7 +39,7 @@ namespace SessionManager.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SessionManagerViewModel.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SessionManager.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,24 @@ namespace SessionManager.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provide a name for this session.
+        /// </summary>
+        internal static string _enterSessionNameMessage {
+            get {
+                return ResourceManager.GetString("_enterSessionNameMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Session Name.
+        /// </summary>
+        internal static string _enterSessionNameTitle {
+            get {
+                return ResourceManager.GetString("_enterSessionNameTitle", resourceCulture);
             }
         }
     }

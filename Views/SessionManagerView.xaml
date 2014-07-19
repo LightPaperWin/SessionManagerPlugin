@@ -3,17 +3,49 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:viewModels="clr-namespace:SessionManager.ViewModels"
+             xmlns:models="clr-namespace:SessionManager.Models"
+             d:DataContext="{d:DesignInstance viewModels:SessionManagerViewModel}"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="../Resources/Styles.SessionManager.Icons.xaml" />
+    </UserControl.Resources>
     <Grid UseLayoutRounding="True">
-        <GroupBox x:Name="WorkingDocsGroupBox">
+        <GroupBox x:Name="WorkingDocsGroupBox" Padding="4 1 1 1"
+                  Style="{DynamicResource _sidebarGroupBox}">
+
+            <GroupBox.Resources>
+                <DataTemplate x:Key="_sessionDataTemplate" DataType="models:Session">
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right" Margin="2 0" Opacity="0.8" Width="16" Height="16"
+                                Style="{DynamicResource _deleteButtonStyle}"
+                                Command="{Binding DataContext.DeleteSessionCommand,RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}" />
+                        <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Padding="0 2"
+                                   Text="{Binding DocumentPaths.Count, StringFormat={}(0)}" />
+                        <TextBlock DockPanel.Dock="Left" Padding="2" VerticalAlignment="Center"
+                                   Text="{Binding Title}" />
+                    </DockPanel>
+                </DataTemplate>
+
+
+            </GroupBox.Resources>
             <GroupBox.Header>
+
                 <DockPanel LastChildFill="True" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                    <Button DockPanel.Dock="Right" Content="+" />
-                    <TextBlock DockPanel.Dock="Left" Text="Sessions" />
+                    <Button DockPanel.Dock="Right" Width="22" Height="22" Opacity="0.8" Margin="0"
+                            Command="{Binding SaveCurrentSessionCommand}"
+                            Style="{DynamicResource _chromelessButtonStyle}">
+                        <Image x:Name="DeleteImage" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Source="{StaticResource _saveImage}" />
+                    </Button>
+                    <TextBlock DockPanel.Dock="Left" Text="SESSIONS" VerticalAlignment="Center" />
                 </DockPanel>
             </GroupBox.Header>
-            <ListBox IsSynchronizedWithCurrentItem="True" MaxHeight="200" />
+            <ListBox IsSynchronizedWithCurrentItem="True" MaxHeight="200"
+                     ItemTemplate="{StaticResource _sessionDataTemplate}"
+                     ItemsSource="{Binding Sessions}" />
         </GroupBox>
     </Grid>
 </UserControl>
