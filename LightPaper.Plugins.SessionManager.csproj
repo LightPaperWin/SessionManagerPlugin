@@ -151,9 +151,7 @@
       <Name>LightPaper.ResourceSatellite</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="Resources\Styles.SessionManager.Icons.xaml">
       <Generator>MSBuild:Compile</Generator>

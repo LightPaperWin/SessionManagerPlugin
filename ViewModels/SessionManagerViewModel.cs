@@ -13,8 +13,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using LightPaper.Infrastructure;
 using LightPaper.Infrastructure.Contracts;
+using LightPaper.Infrastructure.Events;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Logging;
+using Microsoft.Practices.Prism.PubSubEvents;
 using Newtonsoft.Json;
 using PuppyFramework;
 using PuppyFramework.Helpers;
@@ -36,6 +38,7 @@ namespace SessionManager.ViewModels
         [Import(LightPaper.Infrastructure.MagicStrings.ExportContractNames.DEFAULT_SESSION_MANAGER)] private Lazy<ISessionManager> _defaultSessionManager;
         [Import] private Lazy<IUserInteraction> _userInteraction;
 #pragma warning restore 649
+        private readonly IEventAggregator _eventAggregator;
         private readonly IDocumentsManager _documentsManager;
         private ObservableCollection<Session> _sessions;
         private ICollectionView _sessionsCollectionView;
@@ -47,7 +50,7 @@ namespace SessionManager.ViewModels
         #region Properties
 
         public ICommand DeleteSessionCommand { get; private set; }
-        public ICommand SaveCurrentSessionCommand { get; private set; }
+        public DelegateCommand SaveCurrentSessionCommand { get; private set; }
 
         public bool RestoreLastSession
         {
@@ -75,10 +78,34 @@ namespace SessionManager.ViewModels
         #region Constructors
 
         [ImportingConstructor]
-        public SessionManagerViewModel(ILogger logger, IDocumentsManager documentsManager) : base(logger)
+        public SessionManagerViewModel(ILogger logger, IEventAggregator eventAggregator, IDocumentsManager documentsManager) : base(logger)
         {
+            _eventAggregator = eventAggregator;
             _documentsManager = documentsManager;
             Initialize();
+            HookEvents();
+        }
+
+        private void HookEvents()
+        {
+            _eventAggregator.GetEvent<SelectedDocumentChangedEvent>().Subscribe(SelectedDocumentChangedEventHandler);
+        }
+
+        private void SelectedDocumentChangedEventHandler(SelectedDocumentChangedEvent.Payload payload)
+        {
+            if (payload.OldSelection != null)
+            {
+                payload.OldSelection.PropertyChanged -= DocumentPropertyChangedHandler;
+            }
+            if (payload.NewSelection != null)
+            {
+                payload.NewSelection.PropertyChanged += DocumentPropertyChangedHandler;
+            }
+        }
+
+        private void DocumentPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
+        {
+            SaveCurrentSessionCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -90,7 +117,13 @@ namespace SessionManager.ViewModels
             _logger.Log("Initialized {type}", Category.Info, MagicStrings.PLUGIN_CATEGORY, GetType().Name);
             RestoreLastSession = Settings.Default._restoreLastSession;
             DeleteSessionCommand = new DelegateCommand<Session>(DeleteSessionCommandHandler);
-            SaveCurrentSessionCommand = new DelegateCommand(SaveCurrentSessionCommandHandler);
+            SaveCurrentSessionCommand = new DelegateCommand(SaveCurrentSessionCommandHandler, CanSaveCurrentSession);
+            _documentsManager.WorkingDocuments.CollectionChanged += (sender, args) => SaveCurrentSessionCommand.RaiseCanExecuteChanged();
+        }
+
+        private bool CanSaveCurrentSession()
+        {
+            return GetCurrentValidPaths().Any();
         }
 
         private async void SaveCurrentSessionCommandHandler()
