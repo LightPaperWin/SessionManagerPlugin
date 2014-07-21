@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -14,6 +13,7 @@ using System.Windows.Input;
 using LightPaper.Infrastructure;
 using LightPaper.Infrastructure.Contracts;
 using LightPaper.Infrastructure.Events;
+using LightPaper.Infrastructure.Helpers;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Logging;
 using Microsoft.Practices.Prism.PubSubEvents;
@@ -44,6 +44,7 @@ namespace SessionManager.ViewModels
         private ICollectionView _sessionsCollectionView;
         private string _sessionsFilePath;
         private bool _restoreLastSession;
+        private IDocument _currentDocument;
 
         #endregion
 
@@ -86,31 +87,42 @@ namespace SessionManager.ViewModels
             HookEvents();
         }
 
+        #endregion
+
+        #region Methods
+
         private void HookEvents()
         {
             _eventAggregator.GetEvent<SelectedDocumentChangedEvent>().Subscribe(SelectedDocumentChangedEventHandler);
+            _eventAggregator.GetEvent<DocumentWillCloseEvent>().Subscribe(DocumentWillCloseEventHandler);
+        }
+
+        public void DocumentWillCloseEventHandler(IDocument document)
+        {
+            if (document != _currentDocument) return;
+            UnHookDocumentEvents(document);
+            _currentDocument = null;
+        }
+
+        private void UnHookDocumentEvents(IDocument document)
+        {
+            if (document != null)
+            {
+                document.PropertyChanged -= DocumentPropertyChangedHandler;
+            }
         }
 
         private void SelectedDocumentChangedEventHandler(SelectedDocumentChangedEvent.Payload payload)
         {
-            if (payload.OldSelection != null)
-            {
-                payload.OldSelection.PropertyChanged -= DocumentPropertyChangedHandler;
-            }
-            if (payload.NewSelection != null)
-            {
-                payload.NewSelection.PropertyChanged += DocumentPropertyChangedHandler;
-            }
+            UnHookDocumentEvents(payload.OldSelection);
+            _currentDocument = payload.NewSelection;
+            _currentDocument.PropertyChanged += DocumentPropertyChangedHandler;
         }
 
         private void DocumentPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
             SaveCurrentSessionCommand.RaiseCanExecuteChanged();
         }
-
-        #endregion
-
-        #region Methods
 
         private void Initialize()
         {
@@ -123,12 +135,12 @@ namespace SessionManager.ViewModels
 
         private bool CanSaveCurrentSession()
         {
-            return GetCurrentValidPaths().Any();
+            return _documentsManager.WorkingDocuments.FilterValidPaths().Any();
         }
 
         private async void SaveCurrentSessionCommandHandler()
         {
-            var paths = GetCurrentValidPaths().ToList();
+            var paths = _documentsManager.WorkingDocuments.FilterValidPaths().ToList();
             if (!paths.Any()) return;
             var title = await _userInteraction.Value.PromptInputAsync(Resources._enterSessionNameTitle, Resources._enterSessionNameMessage);
             if (string.IsNullOrWhiteSpace(title)) return;
@@ -190,7 +202,7 @@ namespace SessionManager.ViewModels
         private bool DoRestoreLastSession()
         {
             var lastSessionPaths = Settings.Default._lastSession;
-            if (!Settings.Default._restoreLastSession || lastSessionPaths == null || lastSessionPaths.Count == 0) return false;
+            if (!RestoreLastSession || lastSessionPaths == null || lastSessionPaths.Count == 0) return false;
             try
             {
                 _documentsManager.AddFromPaths(lastSessionPaths.Cast<string>());
@@ -226,15 +238,10 @@ namespace SessionManager.ViewModels
         private void SaveLastSession()
         {
             var paths = new StringCollection();
-            paths.AddRange(GetCurrentValidPaths().ToArray());
+            paths.AddRange(_documentsManager.RecentlyClosedDocuments.ToArray());
             Settings.Default._lastSession = paths;
             Settings.Default.Save();
             _logger.Log("Saved last session", Category.Info, MagicStrings.PLUGIN_CATEGORY);
-        }
-
-        private IEnumerable<string> GetCurrentValidPaths()
-        {
-            return _documentsManager.WorkingDocuments.Select(d => d.SourcePath).Where(p => !string.IsNullOrWhiteSpace(p));
         }
 
         public static bool WriteToFile(string path, string data)
