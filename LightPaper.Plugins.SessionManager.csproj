@@ -41,6 +41,14 @@
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\..\packages\AvalonEdit.5.0.1-pre\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
+    <Reference Include="LightPaper.Infrastructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\LightPaper.Infrastructure.0.0.1-pre\lib\LightPaper.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="LightPaper.ResourceSatellite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\LightPaper.ResourceSatellite.0.0.1-pre\lib\LightPaper.ResourceSatellite.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -140,16 +148,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\LightPaper.Infrastructure\LightPaper.Infrastructure.csproj">
-      <Project>{d735bddc-32af-4eab-991f-05df990001a2}</Project>
-      <Name>LightPaper.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\LightPaper.ResourceSatellite\LightPaper.ResourceSatellite.csproj">
-      <Project>{67020a86-b71f-4214-83c1-a83d4ba696ce}</Project>
-      <Name>LightPaper.ResourceSatellite</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

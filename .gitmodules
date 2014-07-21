@@ -1,6 +1,0 @@
-[submodule "LightPaper.Infrastructure"]
-	path = LightPaper.Infrastructure
-	url = git@github.com:LightPaper/Infrastructure.git
-[submodule "LightPaper.ResourceSatellite"]
-	path = LightPaper.ResourceSatellite
-	url = git@github.com:LightPaper/ResourceSatellite.git
