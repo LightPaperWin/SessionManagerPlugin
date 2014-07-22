@@ -47,7 +47,7 @@
     </Reference>
     <Reference Include="LightPaper.ResourceSatellite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\LightPaper.ResourceSatellite.0.0.1-pre\lib\LightPaper.ResourceSatellite.dll</HintPath>
+      <HintPath>..\..\packages\LightPaper.ResourceSatellite.0.0.2-pre\lib\LightPaper.ResourceSatellite.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\MahApps.Metro.dll</HintPath>
