@@ -7,9 +7,9 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using LightPaper.Infrastructure;
 using LightPaper.Infrastructure.Contracts;
 using LightPaper.Infrastructure.Events;
@@ -36,7 +36,7 @@ namespace SessionManager.ViewModels
 
 #pragma warning disable 649
         [Import(LightPaper.Infrastructure.MagicStrings.ExportContractNames.DEFAULT_SESSION_MANAGER)] private Lazy<ISessionManager> _defaultSessionManager;
-        [Import] private Lazy<IUserInteraction> _userInteraction;
+        [Import(AllowRecomposition = true)] private Lazy<IUserInteraction> _userInteraction;
 #pragma warning restore 649
         private readonly IEventAggregator _eventAggregator;
         private readonly IDocumentsManager _documentsManager;
@@ -194,8 +194,7 @@ namespace SessionManager.ViewModels
                 _documentsManager.AddFromPaths(session.DocumentPaths);
             }
             _logger.Log("Loaded session {Title}", Category.Info, MagicStrings.PLUGIN_CATEGORY, session.Title);
-            await Task.Delay(100);
-            _sessionsCollectionView.MoveCurrentTo(null);
+            await Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => _sessionsCollectionView.MoveCurrentTo(null)));
             _sessionsCollectionView.CurrentChanged += SessionCurrentChangedHandler;
         }
 
