@@ -77,5 +77,23 @@ namespace SessionManager.Properties {
                 return ResourceManager.GetString("_enterSessionNameTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} file(s) from this session are missing. Do you want to remove them from this session?.
+        /// </summary>
+        internal static string _filesMissingMessage {
+            get {
+                return ResourceManager.GetString("_filesMissingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Files Missing.
+        /// </summary>
+        internal static string _filesMissingTitle {
+            get {
+                return ResourceManager.GetString("_filesMissingTitle", resourceCulture);
+            }
+        }
     }
 }

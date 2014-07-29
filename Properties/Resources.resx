@@ -123,4 +123,10 @@
   <data name="_enterSessionNameTitle" xml:space="preserve">
     <value>Session Name</value>
   </data>
+  <data name="_filesMissingTitle" xml:space="preserve">
+    <value>Files Missing</value>
+  </data>
+  <data name="_filesMissingMessage" xml:space="preserve">
+    <value>{0} file(s) from this session are missing. Do you want to remove them from this session?</value>
+  </data>
 </root>

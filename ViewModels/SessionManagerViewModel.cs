@@ -191,7 +191,18 @@ namespace SessionManager.ViewModels
             var confirmation = await _documentsManager.CloseAllAsync();
             if (confirmation == UserPromptResult.Yes)
             {
-                _documentsManager.AddFromPaths(session.DocumentPaths);
+                var documentPaths = session.DocumentPaths.Where(File.Exists).ToList();
+                var diff =  session.DocumentPaths.Count - documentPaths.Count;
+                if (diff > 0)
+                {
+                    var result = await _userInteraction.Value.PromptForConfirmation(Resources._filesMissingTitle, string.Format(Resources._filesMissingMessage, diff), false);
+                    if (result == UserPromptResult.Yes)
+                    {
+                        _logger.Log("Removing {Count} documents from session {Title}", Category.Warn, MagicStrings.PLUGIN_CATEGORY, diff, session.Title);
+                        session.DocumentPaths = documentPaths;
+                    }
+                }
+                _documentsManager.AddFromPaths(documentPaths);
             }
             _logger.Log("Loaded session {Title}", Category.Info, MagicStrings.PLUGIN_CATEGORY, session.Title);
             await Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => _sessionsCollectionView.MoveCurrentTo(null)));
